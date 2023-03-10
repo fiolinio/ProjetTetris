@@ -7,7 +7,7 @@ class ModeleTetris:
         """
         ModeleTetris -> ModeleTetris
         """
-        self.__haut = haut + 4
+        self.__haut = haut
         self.__larg = larg
         self.__base = 4
         l = []
@@ -53,8 +53,8 @@ class ModeleTetris:
         ModeleTetris -> bool
         Vérifie si la partie est finie.
         """
-        for i in self.__base:
-            for j in self.__larg:
+        for i in range(self.__base):
+            for j in range(self.__larg):
                 if self.est_occupe(i, j):
                     return True
         return False
@@ -65,7 +65,7 @@ class ModeleTetris:
         Ajoute la forme sur le terrain.
         """
         for c in self.__forme.get_coords():
-            self.__terrain[c[1], c[0]] = self.__forme.get_couleur()
+            self.__terrain[c[1]][c[0]] = self.__forme.get_couleur()
         return
 
     def forme_tombe(self):
@@ -76,8 +76,8 @@ class ModeleTetris:
         if not self.__forme.tombe():
             return
         for c in self.__forme.get_coords():
-            self.__terrain[c[1], c[0]] = -1 if c[1] >= 4 else -2
-            self.ajoute_forme(self.__forme)
+            self.__terrain[c[1]][c[0]] = -1 if c[1] >= 4 else -2
+            self.ajoute_forme()
         return
 
     def get_couleur_forme(self):
@@ -130,7 +130,7 @@ class Forme:
         Vérifie si la forme doit se poser.
         """
         for coord in self.get_coords():
-            if coord[1] + 1 >= self.__modele.get_longueur():
+            if coord[1] + 1 >= self.__modele.get_hauteur():
                 return True
             if self.__modele.est_occupe(coord[1] + 1, coord[0]):
                 return True

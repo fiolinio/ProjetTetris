@@ -15,11 +15,14 @@ class VueTetris:
         self.__can_terrain = Canvas()
         self.__les_cases = []
         self.__fenetre = Tk()
+        self.__bouton = Button(self.__fenetre, text="Au revoir", command=self.__fenetre.quit)
+        self.__can_terrain.grid(row=0, column=0)
+        self.__can_terrain.grid(row=0, column=1)
         self.__frame = Frame()
         for i in range(self.__modele.get_hauteur()):
             temp_l = []
             for j in range(self.__modele.get_largeur()):
-                temp_l.append(self.__can_terrain.create_rectangle(i * DIM, (j + 1) * DIM, outline="grey"))
+                temp_l.append(self.__can_terrain.create_rectangle(i * DIM, j * DIM, (i + 1) * DIM, (j + 1) * DIM,                                                               outline="grey"))
             self.__les_cases.append(temp_l)
         return
 
@@ -51,8 +54,8 @@ class VueTetris:
     def dessine_forme(self, coords, couleur):
         """
         VueTetris, list(tuple(int,int)), int -> None
-        Dessine une forme sur le terrain
+        Dessine une forme sur le terrain.
         """
         for c in coords:
-            self.dessine_case(c[1], c[0], COULEURS[couleur])
+            self.dessine_case(c[1], c[0], couleur)
         return
