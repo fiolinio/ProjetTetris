@@ -12,7 +12,7 @@ class ModeleTetris:
         self.__base = 4
         l = []
         for i in range(haut):
-            if i > 4:
+            if i > self.__base - 1:
                 l.append([-1 for j in range(larg)])
             else:
                 l.append([-2 for j in range(larg)])
@@ -23,14 +23,14 @@ class ModeleTetris:
     def get_largeur(self):
         """
         ModeleTetris -> int
-        Retourne la hauteur du terrain.
+        Retourne la largeur du terrain.
         """
         return self.__larg
 
     def get_hauteur(self):
         """
         ModeleTetris -> int
-        Retourne la largeur du terrain.
+        Retourne la hauteur du terrain.
         """
         return self.__haut
 

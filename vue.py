@@ -12,17 +12,20 @@ class VueTetris:
         VueTetris, ModeleTetris -> VueTetris
         """
         self.__modele = modele
-        self.__can_terrain = Canvas()
         self.__les_cases = []
         self.__fenetre = Tk()
-        self.__bouton = Button(self.__fenetre, text="Au revoir", command=self.__fenetre.quit)
+        self.__fenetre.title("Tetris")
+        self.__can_terrain = Canvas(self.__fenetre, height=DIM*self.__modele.get_hauteur(),
+                                    width=DIM*self.__modele.get_largeur())
+        self.__bouton = Button(self.__fenetre, text="Quitter", command=self.__fenetre.destroy)
         self.__can_terrain.grid(row=0, column=0)
-        self.__can_terrain.grid(row=0, column=1)
+        self.__bouton.grid(row=0, column=1)
         self.__frame = Frame()
         for i in range(self.__modele.get_hauteur()):
             temp_l = []
             for j in range(self.__modele.get_largeur()):
-                temp_l.append(self.__can_terrain.create_rectangle(i * DIM, j * DIM, (i + 1) * DIM, (j + 1) * DIM,                                                               outline="grey"))
+                temp_l.append(self.__can_terrain.create_rectangle(j * DIM, i * DIM, (j + 1) * DIM, (i + 1) * DIM,
+                                                                  outline="grey"))
             self.__les_cases.append(temp_l)
         return
 
