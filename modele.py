@@ -12,7 +12,7 @@ class ModeleTetris:
         self.__base = 4
         l = []
         for i in range(haut):
-            if i > self.__base - 1:
+            if i >= self.__base:
                 l.append([-1 for j in range(larg)])
             else:
                 l.append([-2 for j in range(larg)])
@@ -53,9 +53,9 @@ class ModeleTetris:
         ModeleTetris -> bool
         Vérifie si la partie est finie.
         """
-        for i in range(self.__base):
-            for j in range(self.__larg):
-                if self.est_occupe(i, j):
+        if self.__forme.collision():
+            for coord in self.get_coords_forme():
+                if coord[1] >= self.__base:
                     return True
         return False
 
@@ -73,10 +73,10 @@ class ModeleTetris:
         ModeleTetris -> None
         Fait tomber la forme sur le terrain.
         """
-        if not self.__forme.tombe():
+        if self.__forme.tombe():
             return
         for c in self.__forme.get_coords():
-            self.__terrain[c[1]][c[0]] = -1 if c[1] >= 4 else -2
+            self.__terrain[c[1]-1][c[0]] = -1 if c[1]-1 >= self.__base else -2
             self.ajoute_forme()
         return
 
@@ -129,22 +129,27 @@ class Forme:
         Forme -> bool
         Vérifie si la forme doit se poser.
         """
-        for coord in self.get_coords():
-            if coord[1] + 1 >= self.__modele.get_hauteur():
-                return True
+        # il faut trouver le bloc le plus en bas
+        blocs_bas = [self.get_coords()[0]]
+        for coord in self.get_coords()[1:]:
+            if coord[1] > blocs_bas[0][1]:
+                blocs_bas = [coord]
+            elif coord[1] == blocs_bas[0][1]:
+                blocs_bas.append(coord)
+        if blocs_bas[0][1] + 1 >= self.__modele.get_hauteur():
+            return True
+        for coord in blocs_bas:
             if self.__modele.est_occupe(coord[1] + 1, coord[0]):
                 return True
-            return False
+        return False
 
     def tombe(self):
         """
         Forme -> bool
         Fait tomber d'une ligne la forme s'il n'y a pas de collisions.
-        Retourne si l'action a pu être effectuée.
+        Retourne si il y a eu collision.
         """
         if self.collision():
-            return False
-        new_coords = []
-        for c in self.__forme:
-            new_coords.append((c[0], c[1] + 1))
-        return True
+            return True
+        self.__y0 += 1
+        return False
