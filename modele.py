@@ -114,6 +114,16 @@ class ModeleTetris:
         self.__forme.a_droite()
         return
 
+    def forme_tourne(self):
+        """
+        ModeleTetris -> None
+        Fait tourner la forme sur le terrain de 90 degrés.
+        """
+        for c in self.__forme.get_coords():
+            self.__terrain[c[1]][c[0]] = -1 if c[1] >= self.__base else -2
+        self.__forme.tourne()
+        return
+
 
 class Forme:
 
@@ -206,4 +216,16 @@ class Forme:
         self.__x0 += 1
         if not self.position_valide():
             self.__x0 -= 1
+        return
+
+    def tourne(self):
+        """
+        Forme -> None
+        Fait tourner la forme de 90 degrés.
+        """
+        forme_prec = self.__forme
+        for i in range(len(self.__forme)):
+            self.__forme[i] = (-self.__forme[i][1], self.__forme[i][0])
+        if not self.position_valide():
+            self.__forme = forme_prec
         return
