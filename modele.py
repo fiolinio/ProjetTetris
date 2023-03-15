@@ -76,8 +76,8 @@ class ModeleTetris:
         if self.__forme.tombe():
             return
         for c in self.__forme.get_coords():
-            self.__terrain[c[1]-1][c[0]] = -1 if c[1]-1 >= self.__base else -2
-            self.ajoute_forme()
+            self.__terrain[c[1] - 1][c[0]] = -1 if c[1] - 1 >= self.__base else -2
+        self.ajoute_forme()
         return
 
     def get_couleur_forme(self):
@@ -90,9 +90,29 @@ class ModeleTetris:
     def get_coords_forme(self):
         """
         ModeleTetris -> list(tuple(int, int))
-        Retourne les coordonées absolues de la forme
+        Retourne les coordonées absolues de la forme.
         """
         return self.__forme.get_coords()
+
+    def forme_a_gauche(self):
+        """
+        ModeleTetris -> None
+        Déplace la forme sur le terrain à gauche, si possible
+        """
+        for c in self.__forme.get_coords():
+            self.__terrain[c[1]][c[0]] = -1 if c[1] >= self.__base else -2
+        self.__forme.a_gauche()
+        return
+
+    def forme_a_droite(self):
+        """
+        ModeleTetris -> None
+        Déplace la forme sur le terrain à droite, si possible
+        """
+        for c in self.__forme.get_coords():
+            self.__terrain[c[1]][c[0]] = -1 if c[1] >= self.__base else -2
+        self.__forme.a_droite()
+        return
 
 
 class Forme:
@@ -153,3 +173,37 @@ class Forme:
             return True
         self.__y0 += 1
         return False
+
+    def position_valide(self):
+        """
+        Forme -> bool
+        Retourne si la position de la forme est valide.
+        """
+        for c in self.get_coords():
+            if c not in self.get_coords() and self.__modele.est_occupe(c[1], c[0]):
+                return False
+            if c[0] >= self.__modele.get_largeur() or c[0] < 0:
+                return False
+            if c[1] >= self.__modele.get_hauteur() or c[1] < 0:
+                return False
+        return True
+
+    def a_gauche(self):
+        """
+        Forme -> None
+        Déplace la forme à gauche, si possible.
+        """
+        self.__x0 -= 1
+        if not self.position_valide():
+            self.__x0 += 1
+        return
+
+    def a_droite(self):
+        """
+        Forme -> None
+        Déplace la forme à droite, si possible.
+        """
+        self.__x0 += 1
+        if not self.position_valide():
+            self.__x0 -= 1
+        return
