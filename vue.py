@@ -2,7 +2,7 @@ from tkinter import *
 from modele import *
 
 DIM = 30
-COULEURS = ["red", "blue", "green", "yellow", "orange", "purple", "pink", "dark grey", "black"]
+COULEURS = ["cyan", "yellow", "green", "red", "orange", "blue", "purple", "dark grey", "black"]
 
 
 class VueTetris:
@@ -25,7 +25,7 @@ class VueTetris:
             temp_l = []
             for j in range(self.__modele.get_largeur()):
                 temp_l.append(self.__can_terrain.create_rectangle(j * DIM, i * DIM, (j + 1) * DIM, (i + 1) * DIM,
-                                                                  outline="grey"))
+                                                                  outline="grey", fill=""))
             self.__les_cases.append(temp_l)
         return
 

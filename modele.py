@@ -1,6 +1,15 @@
 from random import randint
 
 
+LES_FORMES = [[(0, -1), (0, 0), (0, 1), (0, 2)],
+              [(0, 0), (1, 0), (0, 1), (1, 1)],
+              [(-1, 0), (0, -1), (0, 0), (1, -1)],
+              [(-1, -1), (0, -1), (0, 0), (1, 0)],
+              [(-1, -1), (-1, 0), (0, 0), (1, 0)],
+              [(-1, 0), (0, 0), (1, 0), (1, 1)],
+              [(-1, 0), (0, 0), (0, 1), (1, 0)]]
+
+
 class ModeleTetris:
 
     def __init__(self, haut=20, larg=14):
@@ -53,10 +62,9 @@ class ModeleTetris:
         ModeleTetris -> bool
         Vérifie si la partie est finie.
         """
-        if self.__forme.collision():
-            for coord in self.get_coords_forme():
-                if coord[1] >= self.__base:
-                    return True
+        for i in range(self.__larg):
+            if self.est_occupe(self.__base, i) and self.__forme.collision():
+                return True
         return False
 
     def ajoute_forme(self):
@@ -70,15 +78,14 @@ class ModeleTetris:
 
     def forme_tombe(self):
         """
-        ModeleTetris -> None
+        ModeleTetris -> bool
         Fait tomber la forme sur le terrain.
         """
         if self.__forme.tombe():
-            return
-        for c in self.__forme.get_coords():
-            self.__terrain[c[1] - 1][c[0]] = -1 if c[1] - 1 >= self.__base else -2
-        self.ajoute_forme()
-        return
+            self.ajoute_forme()
+            self.__forme = Forme(self)
+            return True
+        return False
 
     def get_couleur_forme(self):
         """
@@ -99,8 +106,6 @@ class ModeleTetris:
         ModeleTetris -> None
         Déplace la forme sur le terrain à gauche, si possible
         """
-        for c in self.__forme.get_coords():
-            self.__terrain[c[1]][c[0]] = -1 if c[1] >= self.__base else -2
         self.__forme.a_gauche()
         return
 
@@ -109,8 +114,7 @@ class ModeleTetris:
         ModeleTetris -> None
         Déplace la forme sur le terrain à droite, si possible
         """
-        for c in self.__forme.get_coords():
-            self.__terrain[c[1]][c[0]] = -1 if c[1] >= self.__base else -2
+
         self.__forme.a_droite()
         return
 
@@ -119,8 +123,6 @@ class ModeleTetris:
         ModeleTetris -> None
         Fait tourner la forme sur le terrain de 90 degrés.
         """
-        for c in self.__forme.get_coords():
-            self.__terrain[c[1]][c[0]] = -1 if c[1] >= self.__base else -2
         self.__forme.tourne()
         return
 
@@ -132,10 +134,11 @@ class Forme:
         Forme, ModeleTetris -> Forme
         """
         self.__modele = modele
-        self.__couleur = 0
-        self.__forme = [(-1, 1), (-1, 0), (0, 0), (1, 0)]
+        n = randint(0, len(LES_FORMES) - 1)
+        self.__couleur = n
+        self.__forme = LES_FORMES[n]
         self.__x0 = randint(2, self.__modele.get_largeur() - 2)
-        self.__y0 = 0
+        self.__y0 = 3
 
     def get_couleur(self):
         """
@@ -151,7 +154,7 @@ class Forme:
         """
         l = []
         for i in self.__forme:
-            l.append((i[0] + self.__x0, i[1] + self.__y0))
+            l.append((i[0] + self.__x0, -i[1] + self.__y0))
         return l
 
     def collision(self):
@@ -168,8 +171,8 @@ class Forme:
                 blocs_bas.append(coord)
         if blocs_bas[0][1] + 1 >= self.__modele.get_hauteur():
             return True
-        for coord in blocs_bas:
-            if self.__modele.est_occupe(coord[1] + 1, coord[0]):
+        for c in self.get_coords():
+            if self.__modele.est_occupe(c[1] + 1, c[0]):
                 return True
         return False
 
@@ -179,10 +182,10 @@ class Forme:
         Fait tomber d'une ligne la forme s'il n'y a pas de collisions.
         Retourne si il y a eu collision.
         """
-        if self.collision():
-            return True
-        self.__y0 += 1
-        return False
+        if not self.collision():
+            self.__y0 += 1
+            return False
+        return True
 
     def position_valide(self):
         """
@@ -190,11 +193,11 @@ class Forme:
         Retourne si la position de la forme est valide.
         """
         for c in self.get_coords():
-            if c not in self.get_coords() and self.__modele.est_occupe(c[1], c[0]):
-                return False
             if c[0] >= self.__modele.get_largeur() or c[0] < 0:
                 return False
             if c[1] >= self.__modele.get_hauteur() or c[1] < 0:
+                return False
+            if self.__modele.est_occupe(c[1], c[0]):
                 return False
         return True
 
@@ -223,7 +226,7 @@ class Forme:
         Forme -> None
         Fait tourner la forme de 90 degrés.
         """
-        forme_prec = self.__forme
+        forme_prec = self.__forme.copy()
         for i in range(len(self.__forme)):
             self.__forme[i] = (-self.__forme[i][1], self.__forme[i][0])
         if not self.position_valide():

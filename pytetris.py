@@ -1,4 +1,3 @@
-import modele
 from modele import *
 from vue import *
 import time
@@ -76,5 +75,5 @@ class Controleur:
 
 
 if __name__ == "__main__":
-    tetris = modele.ModeleTetris()
+    tetris = ModeleTetris()
     ctrl = Controleur(tetris)
