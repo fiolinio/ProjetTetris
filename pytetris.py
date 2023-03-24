@@ -36,6 +36,7 @@ class Controleur:
         """
         if self.__tetris.forme_tombe():
             self.__delai = 320
+            self.__vue.dessine_forme_suivante(self.__tetris.get_coords_suivantes(), self.__tetris.get_couleur_suivante())
         self.__vue.dessine_terrain()
         self.__vue.dessine_forme(self.__tetris.get_coords_forme(), self.__tetris.get_couleur_forme())
         self.__vue.met_a_jour_score(self.__tetris.get_score())

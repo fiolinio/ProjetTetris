@@ -3,6 +3,7 @@ from modele import *
 
 DIM = 30
 COULEURS = ["cyan", "yellow", "green", "red", "orange", "blue", "purple", "dark grey", "black"]
+SUIVANT = 6
 
 
 class VueTetris:
@@ -18,6 +19,9 @@ class VueTetris:
         self.__frame = Frame(self.__fenetre)
         self.__can_terrain = Canvas(self.__fenetre, height=DIM*self.__modele.get_hauteur(),
                                     width=DIM*self.__modele.get_largeur())
+        Label(self.__frame, text="Forme suivante :").pack()
+        self.__can_fsuivante = Canvas(self.__frame, height=DIM*SUIVANT, width=DIM*SUIVANT)
+        self.__can_fsuivante.pack()
         self.__lbl_score = Label(self.__frame, text="Score : 0")
         self.__lbl_score.pack()
         self.__bouton = Button(self.__frame, text="Quitter", command=self.__fenetre.destroy)
@@ -30,6 +34,15 @@ class VueTetris:
                 temp_l.append(self.__can_terrain.create_rectangle(j * DIM, i * DIM, (j + 1) * DIM, (i + 1) * DIM,
                                                                   outline="grey", fill=""))
             self.__les_cases.append(temp_l)
+
+        self.__les_suivants = []
+        for i in range(SUIVANT):
+            temp_l = []
+            for j in range(SUIVANT):
+                temp_l.append(self.__can_fsuivante.create_rectangle(j * DIM, i * DIM, (j + 1) * DIM, (i + 1) * DIM,
+                              outline="grey", fill=COULEURS[-1]))
+            self.__les_suivants.append(temp_l)
+        del temp_l
         return
 
     def fenetre(self):
@@ -72,4 +85,32 @@ class VueTetris:
         Met à jour le texte contenant le score.
         """
         self.__lbl_score.configure(text=f"Score: {val}")
+        return
+
+    def dessine_case_suivante(self, x, y, coul):
+        """
+        VueTerrain, int, int, int -> None
+        Dessine la case sur le terrain
+        """
+        self.__can_fsuivante.itemconfigure(self.__les_suivants[x][y], fill=COULEURS[coul])
+        return
+
+    def nettoie_forme_suivante(self):
+        """
+        VueTetris -> None
+        Nettoie toutes les cases de l'affiche de la forme suivante
+        """
+        for x in range(SUIVANT):
+            for y in range(SUIVANT):
+                self.dessine_case_suivante(x, y, -1)
+        return
+
+    def dessine_forme_suivante(self, coords, coul):
+        """
+        VueTetris, list(tuple(int, int)), int -> None
+        Dessine la forme qui suit sur l'affichage
+        """
+        self.nettoie_forme_suivante()
+        for c in coords:
+            self.dessine_case_suivante(c[1]+2, c[0]+2, coul)
         return

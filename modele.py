@@ -27,6 +27,7 @@ class ModeleTetris:
                 l.append([-2 for j in range(larg)])
         self.__terrain = l
         self.__forme = Forme(self)
+        self.__suivante = Forme(self)
         self.__score = 0
         return
 
@@ -92,7 +93,8 @@ class ModeleTetris:
         self.suppmrime_lignes_complete()
         if self.__forme.tombe():
             self.ajoute_forme()
-            self.__forme = Forme(self)
+            self.__forme = self.__suivante
+            self.__suivante = Forme(self)
             return True
         return False
 
@@ -109,6 +111,20 @@ class ModeleTetris:
         Retourne les coordonées absolues de la forme.
         """
         return self.__forme.get_coords()
+
+    def get_coords_suivantes(self):
+        """
+        ModeleTetris -> list(tuple(int, int))
+        Retourne les coordonées relatives de la forme suivante.
+        """
+        return self.__suivante.get_coords_relatives()
+
+    def get_couleur_suivante(self):
+        """
+        ModeleTetris -> int
+        Retourne la couleur de la forme suivante
+        """
+        return self.__suivante.get_couleur()
 
     def forme_a_gauche(self):
         """
@@ -155,6 +171,7 @@ class ModeleTetris:
             temp.append(self.__terrain[i])
         for i in range(len(temp)):
             self.__terrain[self.__base+i] = temp[i]
+        del temp
         return
 
     def suppmrime_lignes_complete(self):
@@ -198,6 +215,13 @@ class Forme:
         for i in self.__forme:
             l.append((i[0] + self.__x0, -i[1] + self.__y0))
         return l
+
+    def get_coords_relatives(self):
+        """
+        Forme -> list(tuple(int, int))
+        Retourne les coordonées relatives de la forme.
+        """
+        return self.__forme
 
     def collision(self):
         """
