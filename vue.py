@@ -4,6 +4,8 @@ from modele import *
 DIM = 30
 COULEURS = ["cyan", "yellow", "green", "red", "orange", "blue", "purple", "dark grey", "black"]
 SUIVANT = 6
+FONT = "Euclid"
+DEF_BG_COLOR = "lavender"
 
 
 class VueTetris:
@@ -15,14 +17,15 @@ class VueTetris:
         self.__modele = modele
         self.__les_cases = []
         self.__fenetre = Tk()
+        self.fenetre().tk_setPalette(background=DEF_BG_COLOR)
         self.__fenetre.title("Tetris")
         self.__frame = Frame(self.__fenetre)
         self.__can_terrain = Canvas(self.__fenetre, height=DIM*self.__modele.get_hauteur(),
                                     width=DIM*self.__modele.get_largeur())
-        Label(self.__frame, text="Forme suivante :").pack()
+        Label(self.__frame, text="Forme suivante :", font=(FONT, 15)).pack()
         self.__can_fsuivante = Canvas(self.__frame, height=DIM*SUIVANT, width=DIM*SUIVANT)
         self.__can_fsuivante.pack()
-        self.__lbl_score = Label(self.__frame, text="Score : 0")
+        self.__lbl_score = Label(self.__frame, text="Score : 0", font=(FONT, 20))
         self.__lbl_score.pack()
         self.__bouton = Button(self.__frame, text="Quitter", command=self.__fenetre.destroy)
         self.__can_terrain.grid(row=0, column=0)
