@@ -27,6 +27,7 @@ class ModeleTetris:
                 l.append([-2 for j in range(larg)])
         self.__terrain = l
         self.__forme = Forme(self)
+        self.__score = 0
         return
 
     def get_largeur(self):
@@ -81,6 +82,8 @@ class ModeleTetris:
         ModeleTetris -> bool
         Fait tomber la forme sur le terrain.
         """
+        self.suppmrime_lignes_complete()
+        print(self.est_ligne_complete(self.__haut-1))
         if self.__forme.tombe():
             self.ajoute_forme()
             self.__forme = Forme(self)
@@ -124,6 +127,39 @@ class ModeleTetris:
         Fait tourner la forme sur le terrain de 90 degrés.
         """
         self.__forme.tourne()
+        return
+
+    def est_ligne_complete(self, lig):
+        """
+        ModeleTetris, int -> bool
+        Vérifie si la ligne indicée est complète.
+        """
+        for i in range(self.__larg):
+            if not self.est_occupe(lig, i):
+                return False
+        return True
+
+    def supprime_ligne(self, lig):
+        """
+        ModeleTetris, int -> None
+        Supprime la ligne indicée sur le terrain.
+        """
+        temp = [[-1 for i in range(self.__larg)]]
+        for i in range(self.__base, lig):
+            temp.append(self.__terrain[i])
+        for i in range(len(temp)):
+            self.__terrain[self.__base+i] = temp[i]
+        return
+
+    def suppmrime_lignes_complete(self):
+        """
+        ModeleTetris -> None
+        Supprime les lignes complètes sur le terrain.
+        """
+        for i in range(self.__base, self.__haut):
+            if self.est_ligne_complete(i):
+                self.supprime_ligne(i)
+                self.__score += 1
         return
 
 
