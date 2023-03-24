@@ -51,6 +51,13 @@ class ModeleTetris:
         """
         return self.__terrain[lig][col]
 
+    def get_score(self):
+        """
+        ModeleTetris -> int
+        Retourne le score.
+        """
+        return self.__score
+
     def est_occupe(self, lig, col):
         """
         ModeleTetris, int, int -> bool
@@ -83,7 +90,6 @@ class ModeleTetris:
         Fait tomber la forme sur le terrain.
         """
         self.suppmrime_lignes_complete()
-        print(self.est_ligne_complete(self.__haut-1))
         if self.__forme.tombe():
             self.ajoute_forme()
             self.__forme = Forme(self)

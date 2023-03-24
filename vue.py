@@ -15,12 +15,15 @@ class VueTetris:
         self.__les_cases = []
         self.__fenetre = Tk()
         self.__fenetre.title("Tetris")
+        self.__frame = Frame(self.__fenetre)
         self.__can_terrain = Canvas(self.__fenetre, height=DIM*self.__modele.get_hauteur(),
                                     width=DIM*self.__modele.get_largeur())
-        self.__bouton = Button(self.__fenetre, text="Quitter", command=self.__fenetre.destroy)
+        self.__lbl_score = Label(self.__frame, text="Score : 0")
+        self.__lbl_score.pack()
+        self.__bouton = Button(self.__frame, text="Quitter", command=self.__fenetre.destroy)
         self.__can_terrain.grid(row=0, column=0)
-        self.__bouton.grid(row=0, column=1)
-        self.__frame = Frame()
+        self.__bouton.pack()
+        self.__frame.grid(row=0, column=1)
         for i in range(self.__modele.get_hauteur()):
             temp_l = []
             for j in range(self.__modele.get_largeur()):
@@ -61,4 +64,12 @@ class VueTetris:
         """
         for c in coords:
             self.dessine_case(c[1], c[0], couleur)
+        return
+
+    def met_a_jour_score(self, val):
+        """
+        VueTetris, int -> None
+        Met à jour le texte contenant le score.
+        """
+        self.__lbl_score.configure(text=f"Score: {val}")
         return
