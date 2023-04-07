@@ -4,8 +4,8 @@ from modele import *
 DIM = 30
 COULEURS = ["cyan", "yellow", "green", "red", "orange", "blue", "purple", "dark grey", "black"]
 SUIVANT = 6
-FONT = "Euclid"
-DEF_BG_COLOR = "lavender"
+FONT = "8514oem"
+DEF_BG_COLOR = "#4b326d"
 
 
 class VueTetris:
@@ -25,11 +25,13 @@ class VueTetris:
         Label(self.__frame, text="Forme suivante :", font=(FONT, 15)).pack()
         self.__can_fsuivante = Canvas(self.__frame, height=DIM*SUIVANT, width=DIM*SUIVANT)
         self.__can_fsuivante.pack()
-        self.__lbl_score = Label(self.__frame, text="Score : 0", font=(FONT, 20))
+        self.__lbl_score = Label(self.__frame, text="Score : 0", font=(FONT, 20), pady=10)
         self.__lbl_score.pack()
-        self.__bouton = Button(self.__frame, text="Quitter", command=self.__fenetre.destroy)
+        self.__quit_bouton = Button(self.__frame, text="Quitter", command=self.__fenetre.destroy)
         self.__can_terrain.grid(row=0, column=0)
+        self.__bouton = Button(self.__frame, text="Commencer", pady=5)
         self.__bouton.pack()
+        self.__quit_bouton.pack()
         self.__frame.grid(row=0, column=1)
         for i in range(self.__modele.get_hauteur()):
             temp_l = []
@@ -50,10 +52,17 @@ class VueTetris:
 
     def fenetre(self):
         """
-        VueTetris -> Tk
+        VueTetris -> tkinter.Tk
         Retourne l'instance de la fenêtre.
         """
         return self.__fenetre
+
+    def get_bouton(self):
+        """
+        VueTetris -> tkinter.Button
+        Retourne le bouton principal.
+        """
+        return self.__bouton
 
     def dessine_case(self, i, j, coul):
         """

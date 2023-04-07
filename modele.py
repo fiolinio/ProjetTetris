@@ -31,6 +31,13 @@ class ModeleTetris:
         self.__score = 0
         return
 
+    def reinitialise(self):
+        """
+        ModeleTetris -> None
+        Réinitialise le modèle.
+        """
+        self.__init__()
+
     def get_largeur(self):
         """
         ModeleTetris -> int
