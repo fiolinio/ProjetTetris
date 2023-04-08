@@ -58,6 +58,7 @@ class Controleur:
         self.__pause = True
         self.__delai = 320
         self.__vue.get_bouton().configure(text="Commencer", command=self.on_click)
+        self.__vue.nettoie_forme_suivante()
         self.joue()
         return
 
