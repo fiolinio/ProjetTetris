@@ -52,14 +52,14 @@ class VueTetris:
 
     def fenetre(self):
         """
-        VueTetris -> tkinter.Tk
+        VueTetris -> Tk
         Retourne l'instance de la fenêtre.
         """
         return self.__fenetre
 
     def get_bouton(self):
         """
-        VueTetris -> tkinter.Button
+        VueTetris -> Button
         Retourne le bouton principal.
         """
         return self.__bouton
@@ -96,7 +96,7 @@ class VueTetris:
         VueTetris, int -> None
         Met à jour le texte contenant le score.
         """
-        self.__lbl_score.configure(text=f"Score: {val}")
+        self.__lbl_score.configure(text=f"Score : {val}")
         return
 
     def dessine_case_suivante(self, x, y, coul):
@@ -125,4 +125,20 @@ class VueTetris:
         self.nettoie_forme_suivante()
         for c in coords:
             self.dessine_case_suivante(c[1]+2, c[0]+2, coul)
+        return
+
+    def fenetre_game_over(self, score, m_score):
+        """
+        VueTetris -> None
+        Affiche la fenêtre de Game Over
+        """
+        fen_go = Toplevel(self.__fenetre)
+        fen_go.resizable(False, False)
+        txt_frame = LabelFrame(fen_go)
+        Label(txt_frame, text="Game Over!", font=(FONT, 20)).pack()
+        Label(txt_frame, text=f"Votre score: {score}", font=(FONT, 10)).pack()
+        Label(txt_frame, text=f"Meilleur score: {m_score}", font=(FONT, 10)).pack()
+        txt_frame.grid(row=0, column=0, pady=5)
+        Button(fen_go, text="Ok", command=fen_go.destroy).grid(row=1, column=0)
+        fen_go.mainloop()
         return

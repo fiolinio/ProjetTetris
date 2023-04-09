@@ -1,6 +1,4 @@
-from modele import *
 from vue import *
-import time
 
 
 class Controleur:
@@ -19,6 +17,7 @@ class Controleur:
         self.__fen.bind("<Key-Up>", self.forme_tourne)
         self.__delai = 320
         self.__pause = True
+        self.__m_score = 0  # Variable de meilleur score
         self.joue()
         self.__fen.mainloop()
         return
@@ -44,6 +43,9 @@ class Controleur:
             self.affichage()
         elif self.__tetris.fini():
             self.__vue.get_bouton().configure(text="Recommencer", command=self.recommencer)
+            if self.__tetris.get_score() > self.__m_score:
+                self.__m_score = self.__tetris.get_score()
+            self.__vue.fenetre_game_over(self.__tetris.get_score(), self.__m_score)
             return
         self.__fen.after(self.__delai, self.joue)
         return

@@ -19,13 +19,13 @@ class ModeleTetris:
         self.__haut = haut
         self.__larg = larg
         self.__base = 4
-        l = []
+        ligne = []
         for i in range(haut):
             if i >= self.__base:
-                l.append([-1 for j in range(larg)])
+                ligne.append([-1 for j in range(larg)])
             else:
-                l.append([-2 for j in range(larg)])
-        self.__terrain = l
+                ligne.append([-2 for j in range(larg)])
+        self.__terrain = ligne
         self.__forme = Forme(self)
         self.__suivante = Forme(self)
         self.__score = 0
@@ -78,8 +78,8 @@ class ModeleTetris:
         ModeleTetris -> bool
         Vérifie si la partie est finie.
         """
-        for i in range(self.__larg):
-            if self.est_occupe(self.__base, i) and self.__forme.collision():
+        for i in range(self.__larg - 1):
+            if self.est_occupe(self.__base, i) and self.est_occupe(self.__base - 1, i):
                 return True
         return False
 
@@ -97,7 +97,7 @@ class ModeleTetris:
         ModeleTetris -> bool
         Fait tomber la forme sur le terrain.
         """
-        self.suppmrime_lignes_complete()
+        self.supprime_lignes_complete()
         if self.__forme.tombe():
             self.ajoute_forme()
             self.__forme = self.__suivante
@@ -115,14 +115,14 @@ class ModeleTetris:
     def get_coords_forme(self):
         """
         ModeleTetris -> list(tuple(int, int))
-        Retourne les coordonées absolues de la forme.
+        Retourne les coordonnées absolues de la forme.
         """
         return self.__forme.get_coords()
 
     def get_coords_suivantes(self):
         """
         ModeleTetris -> list(tuple(int, int))
-        Retourne les coordonées relatives de la forme suivante.
+        Retourne les coordonnées relatives de la forme suivante.
         """
         return self.__suivante.get_coords_relatives()
 
@@ -181,7 +181,7 @@ class ModeleTetris:
         del temp
         return
 
-    def suppmrime_lignes_complete(self):
+    def supprime_lignes_complete(self):
         """
         ModeleTetris -> None
         Supprime les lignes complètes sur le terrain.
@@ -218,15 +218,15 @@ class Forme:
         Forme -> list(tuple(int, int))
         Retourne les coordonnées absolues d'une forme.
         """
-        l = []
+        coords = []
         for i in self.__forme:
-            l.append((i[0] + self.__x0, -i[1] + self.__y0))
-        return l
+            coords.append((i[0] + self.__x0, -i[1] + self.__y0))
+        return coords
 
     def get_coords_relatives(self):
         """
         Forme -> list(tuple(int, int))
-        Retourne les coordonées relatives de la forme.
+        Retourne les coordonnées relatives de la forme.
         """
         return self.__forme
 
