@@ -1,12 +1,11 @@
 from random import randint
 
-
 LES_FORMES = [[(0, -1), (0, 0), (0, 1), (0, 2)],
               [(0, 0), (1, 0), (0, 1), (1, 1)],
-              [(-1, 0), (0, -1), (0, 0), (1, -1)],
               [(-1, -1), (0, -1), (0, 0), (1, 0)],
+              [(-1, 0), (0, -1), (0, 0), (1, -1)],
               [(-1, -1), (-1, 0), (0, 0), (1, 0)],
-              [(-1, 0), (0, 0), (1, 0), (1, 1)],
+              [(1, -1), (-1, 0), (0, 0), (1, 0)],
               [(-1, 0), (0, 0), (0, 1), (1, 0)]]
 
 
@@ -16,6 +15,8 @@ class ModeleTetris:
         """
         ModeleTetris -> ModeleTetris
         """
+        self.__reserve_utilisee = False
+        self.__a_tetris = False
         self.__haut = haut
         self.__larg = larg
         self.__base = 4
@@ -29,6 +30,7 @@ class ModeleTetris:
         self.__forme = Forme(self)
         self.__suivante = Forme(self)
         self.__score = 0
+        self.__reserve = None
         return
 
     def reinitialise(self):
@@ -100,6 +102,7 @@ class ModeleTetris:
         self.supprime_lignes_complete()
         if self.__forme.tombe():
             self.ajoute_forme()
+            self.__reserve_utilisee = False
             self.__forme = self.__suivante
             self.__suivante = Forme(self)
             return True
@@ -129,9 +132,23 @@ class ModeleTetris:
     def get_couleur_suivante(self):
         """
         ModeleTetris -> int
-        Retourne la couleur de la forme suivante
+        Retourne la couleur de la forme suivante.
         """
         return self.__suivante.get_couleur()
+
+    def get_coords_reserve(self):
+        """
+        ModeleTetris -> list(tuple(int, int))
+        Retourne les coordonnées relatives de la forme en reserve.
+        """
+        return self.__reserve.get_coords_relatives()
+
+    def get_couleur_reserve(self):
+        """
+        ModeleTetris -> int
+        Retourne la couleur de la forme en reserve.
+        """
+        return self.__reserve.get_couleur()
 
     def forme_a_gauche(self):
         """
@@ -177,19 +194,57 @@ class ModeleTetris:
         for i in range(self.__base, lig):
             temp.append(self.__terrain[i])
         for i in range(len(temp)):
-            self.__terrain[self.__base+i] = temp[i]
+            self.__terrain[self.__base + i] = temp[i]
         del temp
         return
 
     def supprime_lignes_complete(self):
         """
-        ModeleTetris -> None
+        ModeleTetris -> bool
         Supprime les lignes complètes sur le terrain.
+        Retourne si 4 lignes ont été supprimées.
         """
+        lignes_comp = 0
         for i in range(self.__base, self.__haut):
             if self.est_ligne_complete(i):
+                lignes_comp += 1
                 self.supprime_ligne(i)
                 self.__score += 1
+            if lignes_comp == 4:
+                self.__a_tetris = True
+                self.__score += 2
+                return True
+        return False
+
+    def get_a_tetris(self):
+        """
+        ModeleTetris -> bool
+        Retourne la valeur de __a_tetris.
+        Réinitialise sa valeur à False.
+        """
+        if self.__a_tetris:
+            self.__a_tetris = False
+            return True
+        return False
+
+    def ajoute_reserve(self):
+        """
+        ModeleTetris -> None
+        Ajoute la forme courante à la réserve.
+        """
+        if not self.__reserve_utilisee:
+            self.__reserve_utilisee = True
+            temp1, temp2, temp3 = self.__reserve, self.__forme, self.__suivante
+            if self.__reserve is None:
+                self.__reserve = self.__forme
+                self.__forme = self.__suivante
+                self.__suivante = Forme(self)
+            else:
+                self.__reserve, self.__forme = self.__forme, self.__reserve
+            if not self.__forme.position_valide():
+                self.__reserve, self.__forme, self.__suivante = temp1, temp2, temp3
+                return
+            self.__reserve.reset_position()
         return
 
 
@@ -202,8 +257,8 @@ class Forme:
         self.__modele = modele
         n = randint(0, len(LES_FORMES) - 1)
         self.__couleur = n
-        self.__forme = LES_FORMES[n]
-        self.__x0 = randint(2, self.__modele.get_largeur() - 2)
+        self.__forme = LES_FORMES[n].copy()
+        self.__x0 = randint(3, self.__modele.get_largeur() - 3)
         self.__y0 = self.taille_forme()
 
     def get_couleur(self):
@@ -301,7 +356,7 @@ class Forme:
         """
         forme_prec = self.__forme.copy()
         for i in range(len(self.__forme)):
-            self.__forme[i] = (-self.__forme[i][1], self.__forme[i][0])
+            self.__forme[i] = (self.__forme[i][1], -self.__forme[i][0])
         if not self.position_valide():
             self.__forme = forme_prec
         return
@@ -309,7 +364,14 @@ class Forme:
     def taille_forme(self):
         """
         Forme -> int
-        Retourne la taille de la forme, c'est-à-dire l'écart entre le milieu et le bloc le plus haut
+        Retourne la taille de la forme, c'est-à-dire l'écart entre le milieu et le bloc le plus haut.
         """
         return max([i[1] for i in self.__forme])
 
+    def reset_position(self):
+        """
+        Forme -> None
+        Réinitialise la position de la forme.
+        """
+        self.__y0 = self.taille_forme()
+        return
