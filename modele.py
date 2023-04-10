@@ -204,7 +204,7 @@ class Forme:
         self.__couleur = n
         self.__forme = LES_FORMES[n]
         self.__x0 = randint(2, self.__modele.get_largeur() - 2)
-        self.__y0 = 3
+        self.__y0 = self.taille_forme()
 
     def get_couleur(self):
         """
@@ -305,3 +305,11 @@ class Forme:
         if not self.position_valide():
             self.__forme = forme_prec
         return
+
+    def taille_forme(self):
+        """
+        Forme -> int
+        Retourne la taille de la forme, c'est-à-dire l'écart entre le milieu et le bloc le plus haut
+        """
+        return max([i[1] for i in self.__forme])
+

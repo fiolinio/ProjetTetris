@@ -17,6 +17,7 @@ class VueTetris:
         self.__modele = modele
         self.__les_cases = []
         self.__fenetre = Tk()
+        self.__fenetre.resizable(False, False)
         self.fenetre().tk_setPalette(background=DEF_BG_COLOR)
         self.__fenetre.title("Tetris")
         self.__frame = Frame(self.__fenetre)
@@ -124,7 +125,7 @@ class VueTetris:
         """
         self.nettoie_forme_suivante()
         for c in coords:
-            self.dessine_case_suivante(c[1]+2, c[0]+2, coul)
+            self.dessine_case_suivante(-c[1]+3, c[0]+3, coul)
         return
 
     def fenetre_game_over(self, score, m_score):
@@ -135,7 +136,7 @@ class VueTetris:
         fen_go = Toplevel(self.__fenetre)
         fen_go.resizable(False, False)
         txt_frame = LabelFrame(fen_go)
-        Label(txt_frame, text="Game Over!", font=(FONT, 20)).pack()
+        Label(txt_frame, text="Game Over!", font=(FONT, 20), fg="red").pack()
         Label(txt_frame, text=f"Votre score: {score}", font=(FONT, 10)).pack()
         Label(txt_frame, text=f"Meilleur score: {m_score}", font=(FONT, 10)).pack()
         txt_frame.grid(row=0, column=0, pady=5)
